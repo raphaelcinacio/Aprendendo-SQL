@@ -1,6 +1,5 @@
 ﻿/*===============================================================
 CRIAÇÃO DE TABELAS NO SQL SERVER
-Este script reúne exemplos práticos e comentados sobre:
 - Criação de tabelas
 - Tipos de dados
 - Restrições (Primary Key, Unique, Foreign Key, Check, Default)
@@ -282,3 +281,87 @@ ALTER TABLE dbo.Empregado
 ADD CONSTRAINT DfAdmissao
 DEFAULT(CURRENT_TIMESTAMP) FOR Admissao;
 GO
+
+/*
+===============================================================
+1. ON CASCADE
+===============================================================
+*/
+
+-- Limpando tabelas antigas
+DROP TABLE IF EXISTS dbo.Pedido;
+DROP TABLE IF EXISTS dbo.Empregado;
+
+-- Tabela pai
+CREATE TABLE dbo.Empregado (
+    IdEmpregado INT NOT NULL PRIMARY KEY,
+    Nome NVARCHAR(50) NOT NULL
+);
+
+-- Tabela filha com ON DELETE CASCADE
+CREATE TABLE dbo.Pedido (
+    IdPedido INT NOT NULL PRIMARY KEY,
+    IdEmpregado INT NOT NULL,
+    Cliente NVARCHAR(50) NOT NULL,
+    CONSTRAINT FKEmpregado FOREIGN KEY (IdEmpregado)
+        REFERENCES dbo.Empregado(IdEmpregado)
+        ON DELETE CASCADE  -- Ao apagar o empregado, todos os pedidos dele serão apagados
+);
+
+-- Inserindo dados de exemplo
+INSERT INTO dbo.Empregado VALUES (1, 'Ana Silva'), (2, 'Bruno Souza');
+INSERT INTO dbo.Pedido VALUES (101, 1, 'Cliente A'), (102, 1, 'Cliente B'), (103, 2, 'Cliente C');
+
+-- Teste ON DELETE CASCADE
+-- Apaga todos os pedidos de Ana Silva automaticamente
+DELETE FROM dbo.Empregado WHERE IdEmpregado = 1;
+
+-- Conferir resultados
+SELECT * FROM dbo.Empregado;
+SELECT * FROM dbo.Pedido;
+
+/*
+===============================================================
+2. TABELAS TEMPORÁRIAS
+===============================================================
+*/
+
+-- Tabela temporária local (#)
+CREATE TABLE #ClientesTemp (
+    IdCliente INT,
+    Nome NVARCHAR(50)
+);
+
+INSERT INTO #ClientesTemp VALUES (1, 'Carlos'), (2, 'Daniela');
+
+-- A tabela #ClientesTemp só existe na sessão atual
+SELECT * FROM #ClientesTemp;
+
+-- Tabela temporária global (##)
+CREATE TABLE ##ClientesGlobal (
+    IdCliente INT,
+    Nome NVARCHAR(50)
+);
+
+INSERT INTO ##ClientesGlobal VALUES (1, 'Ana'), (2, 'Bruno');
+
+-- A tabela ##ClientesGlobal pode ser acessada por qualquer sessão
+SELECT * FROM ##ClientesGlobal;
+
+/*
+===============================================================
+NOTAS IMPORTANTES
+===============================================================
+*/
+
+/*
+ON CASCADE
+- Use quando houver dependência forte entre pai e filho.
+- ON DELETE CASCADE: Remove filhos automaticamente ao apagar pai.
+- ON UPDATE CASCADE: Atualiza FK automaticamente se a PK do pai mudar.
+- Atenção: pode apagar muitos registros sem aviso se mal planejado.
+
+Tabelas temporárias
+- Local (#): Visível apenas na sessão atual. Desaparece ao finalizar a sessão ou procedimento.
+- Global (##): Visível em todas as sessões. Desaparece quando a última sessão que a utiliza termina.
+*/
