@@ -43,7 +43,7 @@ O módulo 1 foi organizado em 7 arquivos, seguindo a sequência lógica abaixo:
    - Tipos de dados de data e hora  
    - Funções para manipulação de datas e cálculos  
 
-7. **Juncoes.sql**
+7. **[Juncoes.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%201%20-%20Linguagem_SQL/Juncoes.sql)**
    - Uso de JOINs (INNER, LEFT, RIGHT, FULL)  
    - Combinação de dados entre tabelas  
 
