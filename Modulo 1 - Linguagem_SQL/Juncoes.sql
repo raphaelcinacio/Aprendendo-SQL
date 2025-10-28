@@ -403,3 +403,152 @@ SELECT Nome FROM Clientes
 UNION ALL
 SELECT Nome FROM Fornecedores;
 */
+
+/*
+=====================================================================
+  OUTER JOIN — FILTROS, CONTAGEM E PRIORIDADE DE EXECUÇÃO
+=====================================================================
+
+1) COMO A CLÁUSULA WHERE PODE “ACABAR” COM UM OUTER JOIN
+---------------------------------------------------------------------
+
+O LEFT JOIN retorna todas as linhas da tabela à esquerda, 
+mesmo que não haja correspondência na tabela à direita.
+
+Porém, se aplicarmos um filtro no WHERE sobre a tabela da direita,
+as linhas sem correspondência (que ficariam com valores NULL)
+serão eliminadas — o que transforma o LEFT JOIN em um INNER JOIN.
+*/
+
+-- Exemplo incorreto: elimina clientes sem pedidos
+SELECT c.Nome, p.PedidoID
+FROM Clientes c
+LEFT JOIN Pedidos p
+    ON c.ClienteID = p.ClienteID
+WHERE p.PedidoID IS NOT NULL; -- Remove os NULLs (vira INNER JOIN)
+
+-- Exemplo correto: mantém os clientes sem pedidos
+SELECT c.Nome, p.PedidoID
+FROM Clientes c
+LEFT JOIN Pedidos p
+    ON c.ClienteID = p.ClienteID
+    AND p.DataPedido >= '2025-01-01'; -- Filtro dentro do ON mantém o LEFT JOIN
+
+
+
+/*
+2) COMO A CLÁUSULA JOIN PODE “ACABAR” COM UM OUTER JOIN
+---------------------------------------------------------------------
+
+Quando misturamos diferentes tipos de JOIN (LEFT, RIGHT, INNER)
+sem o uso de parênteses, o SQL Server processa da esquerda para a direita.
+
+Isso pode causar resultados incorretos, pois o INNER JOIN 
+pode "eliminar" linhas que deveriam ser preservadas pelo LEFT JOIN.
+*/
+
+-- Exemplo com erro lógico
+SELECT c.Nome, p.PedidoID, i.NomeProduto
+FROM Clientes c
+LEFT JOIN Pedidos p
+    ON c.ClienteID = p.ClienteID
+INNER JOIN ItensPedido i
+    ON p.PedidoID = i.PedidoID;  -- O INNER JOIN aqui elimina clientes sem pedidos
+
+-- Forma correta: priorizando o INNER JOIN com parênteses
+-- Primeiro é feito o INNER JOIN entre Pedidos e ItensPedido
+-- Depois o resultado é LEFT JOIN com Clientes.
+
+SELECT 
+    c.Nome,
+    p.PedidoID,
+    i.Produto,
+    i.Preco
+FROM Clientes AS c
+LEFT JOIN (
+    Pedidos AS p
+    INNER JOIN ItensPedido AS i
+        ON p.PedidoID = i.PedidoID
+)
+ON c.ClienteID = p.ClienteID;
+
+----------------------------------------------------------
+-- EXEMPLO 2: Sem parênteses (ordem implícita)
+----------------------------------------------------------
+-- Aqui o INNER JOIN entre Pedidos e ItensPedido é interpretado
+-- antes, mas a leitura é menos clara e pode gerar confusão.
+-- Em alguns casos mais complexos, o resultado pode mudar.
+
+SELECT 
+    c.Nome,
+    p.PedidoID,
+    i.Produto,
+    i.Preco
+FROM Clientes AS c
+LEFT JOIN Pedidos AS p
+INNER JOIN ItensPedido AS i
+    ON p.PedidoID = i.PedidoID
+    ON c.ClienteID = p.ClienteID;
+
+/*
+3) FUNÇÃO COUNT COM OUTER JOIN
+---------------------------------------------------------------------
+
+COUNT(*)  -> Conta todas as linhas (inclusive as que possuem NULL).
+COUNT(coluna) -> Conta apenas as linhas onde a coluna NÃO é NULL.
+
+Quando usamos OUTER JOIN e COUNT(coluna), devemos contar colunas que sempre possuem 
+valor (PK, colunas do ON, ou NOT NULL), para evitar contagens incorretas.
+*/
+
+-- Exemplo incorreto
+SELECT c.Nome, COUNT(p.Descricao) AS TotalPedidos
+FROM Clientes c
+LEFT JOIN Pedidos p ON c.ClienteID = p.ClienteID
+GROUP BY c.Nome;  -- Pode retornar 0 se a coluna estiver NULL
+
+-- Exemplo correto
+SELECT c.Nome, COUNT(p.PedidoID) AS TotalPedidos
+FROM Clientes c
+LEFT JOIN Pedidos p ON c.ClienteID = p.ClienteID
+GROUP BY c.Nome;  -- PedidoID é PK e NOT NULL
+
+/*
+4) QUANDO USAR FILTROS NO ON OU NO WHERE
+---------------------------------------------------------------------
+
+Filtrar no ON:
+- Quando quiser manter as linhas da tabela à esquerda (OUTER JOIN)
+- Quando o filtro se aplica apenas à tabela da direita
+
+Filtrar no WHERE:
+- Quando quiser limitar o resultado final (depois do join)
+- Quando usar INNER JOIN (pois não há risco de eliminar NULLs)
+*/
+
+-- Exemplo: filtro no ON (mantém todos os clientes)
+SELECT c.Nome, p.PedidoID
+FROM Clientes c
+LEFT JOIN Pedidos p
+    ON c.ClienteID = p.ClienteID
+    AND p.ValorTotal > 1000; -- Mantém clientes mesmo sem pedidos caros
+
+-- Exemplo: filtro no WHERE (filtra o resultado final)
+SELECT c.Nome, p.PedidoID
+FROM Clientes c
+INNER JOIN Pedidos p
+    ON c.ClienteID = p.ClienteID
+WHERE p.ValorTotal > 1000; -- Correto, pois é INNER JOIN
+
+
+
+/*
+6) RESUMO DAS BOAS PRÁTICAS
+---------------------------------------------------------------------
+
+- Use filtros da tabela da direita no ON, não no WHERE, em OUTER JOINs.
+- Sempre conte colunas PK, NOT NULL ou de relacionamento em OUTER JOINs.
+- Use parênteses para garantir a ordem correta dos joins.
+- Só use OUTER JOIN se precisar realmente das linhas sem correspondência.
+- OUTER JOIN tem uma fase de processamento a mais — evite uso desnecessário.
+*/
