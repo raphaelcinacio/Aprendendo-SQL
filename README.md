@@ -12,7 +12,7 @@ O repositório aborda:
 # Módulo 1: Fundamentos
 
 Bem-vindo ao **Módulo 1** do repositório **Aprendendo SQL**!  
-Este módulo foi criado para ajudar estudantes e iniciantes a aprender SQL de forma prática, com exemplos comentados e exercícios.
+Este módulo foi criado para ajudar estudantes e iniciantes a aprender SQL de forma prática, com exemplos comentados.
 
 ## Ordem de estudo e conteúdo
 
@@ -49,7 +49,46 @@ O módulo 1 foi organizado em 7 arquivos, seguindo a sequência lógica abaixo:
 
 ---
 
-## Como usar este módulo
+# Módulo 2: SQL Intermediário (views, funções, procedures, triggers)
+
+Bem-vindo ao **Módulo 2** do repositório **Aprendendo SQL**!  
+Este módulo foi criado para ajudar estudantes e iniciantes a aprender SQL de forma prática, com exemplos comentados.
+
+## Ordem de estudo e conteúdo
+
+O módulo 2 foi organizado em 7 arquivos, seguindo a sequência lógica abaixo:
+
+1. **[Conceitos.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Conceitos.sql)** 
+   – Conceitos importantes antes de seguirmos sobre o tema de transações 
+
+2. **[Controle de execucao de fluxo.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Controle%20de%20execucao%20de%20fluxo.sql)** 
+   – Estruturas de controle de fluxo: IF, WHILE, CASE e loops.  
+
+3. **[Functions.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Functions.sql)** 
+   – Criação e uso de funções definidas pelo usuário.  
+
+4. **[Procedures.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Procedures.sql)** 
+   – Criação, execução e gerenciamento de stored procedures com parâmetros de entrada/saída.  
+
+5. **[Transacao.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Transacao.sql)** 
+   – Conceitos e controle de transações, COMMIT e ROLLBACK.  
+
+6. **[Tratamento de erros.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Tratamento%20de%20erros.sql)** 
+   – TRY…CATCH, mensagens personalizadas e controle de falhas.  
+
+7. **[Triggers.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Triggers.sql)** 
+   – Criação de triggers de tabela e de banco, AFTER e INSTEAD OF.  
+
+8. **[Variaveis.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Variaveis.sql)** 
+   – Uso de variáveis locais, globais e de tabela.  
+
+9. **[Views.sql](https://github.com/raphaelcinacio/Aprendendo-SQL/blob/main/Modulo%202%20-%20Programacao%20Procedural/Views.sql)** 
+   – Criação e manutenção de views, incluindo views complexas e aninhadas.  
+
+
+---
+
+## Como usar os módulos
 
 - Abra os arquivos `.sql` no seu editor ou banco de dados favorito.  
 - Leia atentamente os comentários em cada arquivo para entender os comandos.  
@@ -60,7 +99,7 @@ O módulo 1 foi organizado em 7 arquivos, seguindo a sequência lógica abaixo:
 
 ### Próximos passos
 
-- Módulo 2: **SQL Intermediário** (views, funções, procedures e subqueries)  
+- Módulo 3: **Otimizações 
 - Este repositório será atualizado à medida que cada módulo for finalizado.
 - ![status](https://img.shields.io/badge/status-em%20progresso-orange)
 
